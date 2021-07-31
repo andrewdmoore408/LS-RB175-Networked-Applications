@@ -17,23 +17,16 @@ def parse_request(line)
 end
 
 def parse_query(string)
-  queries = string.split('&')
+  pairs = string.split('&')
 
   params = {}
 
-  queries.each do |pair|
+  pairs.each do |pair|
     name, value = pair.split('=')
     params[name] = value
   end
 
   params
-end
-
-def roll_dice(params)
-  rolls = []
-
-  params["rolls"].to_i.times { |_| rolls << (rand(params["sides"].to_i) + 1)}
-  rolls
 end
 
 server = TCPServer.new("localhost", 3003)
@@ -58,11 +51,6 @@ loop do
   client.puts "<pre>"
   client.puts "Method: #{http_method}\nPath: #{path}\nParams: #{params}\n\n"
   client.puts "</pre>"
-
-  client.puts "<h1>Rolls!</h1>"
-
-  rolls = roll_dice(params)
-  rolls.each { |roll| client.puts "<p>#{roll}</p>" }
 
   client.puts "</body></html>"
   client.close
