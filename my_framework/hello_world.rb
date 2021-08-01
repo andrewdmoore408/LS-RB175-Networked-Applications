@@ -6,11 +6,9 @@ class HelloWorld
   def call(env)
     case env['REQUEST_PATH']
     when '/'
-      [
-        '200',
-        {"Content-Type" => 'text/html'},
-        ["<html><body><h2>Hello World!</h2></body></html>"]
-      ]
+      template = File.read("views/index.erb")
+      content = ERB.new(template)
+      ['200', {"Content-Type" => "text/html"}, [content.result]]
     when '/advice'
       piece_of_advice = Advice.new.generate
       [
