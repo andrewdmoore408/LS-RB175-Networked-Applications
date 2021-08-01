@@ -1,6 +1,7 @@
+require_relative 'monroe'
 require_relative 'advice'
 
-class App
+class App < Monroe
   def call(env)
     case env['REQUEST_PATH']
     when '/'
@@ -18,24 +19,10 @@ class App
       end
     else
       status = '404'
-      headers = {"Content-Type" => 'text/html', "Content-Length" => '61'}
+      headers = {"Content-Type" => 'text/html', "Content-Length" => '60'}
       response(status, headers) do
         erb :not_found
       end
     end
-  end
-
-  private
-
-  def erb(filename, local = {})
-    b = binding
-    message = local[:message]
-    content = File.read("views/#{filename}.erb")
-    ERB.new(content).result(b)
-  end
-
-  def response(status, headers, body = '')
-    body = yield if block_given?
-    [status, headers, [body]]
   end
 end
