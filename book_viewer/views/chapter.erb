@@ -1,7 +1,13 @@
-<h2 class="content-subhead">Chapter <%= @chapter_num %>: <%= @chapter_names[@chapter_num.to_i - 1] %></h2>
+<h2 class="content-subhead">Chapter <%= @chapter_num %>: <%= @chapter_names[@chapter_num - 1] %></h2>
 
+<%= in_paragraphs(@raw_chapter) %>
+
+<%
+=begin %>
 <% @chapter_text.each do |graph| %>
   <p>
     <%= graph %>
   </p>
 <% end %>
+<%
+=end %>
