@@ -24,7 +24,15 @@ get "/chapters/:chapter_num" do
   @chapter_num = params["chapter_num"].to_i
   @title = "#{@chapter_num}: #{@chapter_names[@chapter_num - 1]}"
 
-  @raw_chapter = File.readlines("data/chp#{@chapter_num}.txt", "\n\n")
+  chapter_path = "data/chp#{@chapter_num}.txt"
+
+  redirect "/" unless File.exist?(chapter_path)
+
+  @raw_chapter = File.readlines(chapter_path, "\n\n")
 
   erb :chapter
+end
+
+not_found do
+  redirect "/"
 end
