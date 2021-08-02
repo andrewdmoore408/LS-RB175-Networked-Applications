@@ -1,4 +1,4 @@
-<h2 class="content-subhead">Chapter <%= @chapter_num %></h2>
+<h2 class="content-subhead">Chapter <%= @chapter_num %>: <%= @chapter_names[@chapter_num.to_i - 1] %></h2>
 
 <% @chapter_text.each do |graph| %>
   <p>
