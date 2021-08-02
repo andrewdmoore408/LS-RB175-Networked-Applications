@@ -14,7 +14,7 @@ get "/chapters/:chapter_num" do
   @chapter_names = File.readlines("data/toc.txt")
 
   @chapter_num = params["chapter_num"]
-  @chapter_text = File.read("data/chp#{@chapter_num}.txt")
+  @chapter_text = File.readlines("data/chp#{@chapter_num}.txt", "\n\n").map { |graph| graph.gsub(/\n/, " ") }
 
   erb :chapter
 end
