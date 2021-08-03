@@ -16,9 +16,9 @@ helpers do
   end
 
   def in_paragraphs(arr_text)
-    arr_text.map do |graph|
-      "<p>#{graph.gsub(/\n/, " ")}</p>"
-    end.join
+    arr_text.map.with_index do |graph, index|
+      "<p id=\"paragraph#{index}\">#{graph.gsub(/\n/, " ")}</p>"
+    end
   end
 
   def matching_chapters(query)

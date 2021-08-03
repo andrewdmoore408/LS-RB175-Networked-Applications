@@ -1,3 +1,3 @@
 <h2 class="content-subhead">Chapter <%= @chapter_num %>: <%= @chapter_names[@chapter_num - 1] %></h2>
 
-<%= in_paragraphs(@raw_chapter) %>
+<%= in_paragraphs(@raw_chapter).join %>
