@@ -4,15 +4,32 @@ require "sinatra/reloader"
 
 before do
   @chapter_names = File.readlines("data/toc.txt")
+  @chapter_folder_path = "data/chp"
 end
 
 helpers do
-  def html_chapter_results(chapter_nums)
-    return ["<p>Sorry, no matches were found.</p>"] if chapter_nums.empty?
+  def html_query_results(query, hash)
+    return ["<p>Sorry, no matches were found.</p>"] if hash.empty?
 
-    chapter_links = chapter_nums.map do |num|
-      "<li class=\"search-link\"><a href=\"/chapters/#{num}\">#{@chapter_names[num - 1]}</a></li>"
+    html_results = []
+
+    hash.each do |chapter_num, paragraphs|
+      html_results << "<ul class=\"search-result-chapter-heading\">"
+      html_results << "<li class=\"search-result-chapter-name\">#{@chapter_names[chapter_num - 1]}</li>"
+      html_results << "<ul class=\"search-result-paragraph-links-list\">"
+
+      paragraphs.each_with_index do |graph, index|
+        if graph.include?(query)
+          html_results << "<li class=\"search-result-paragraph-link\">" +
+                          "<a href=\"/chapters/#{chapter_num}#paragraph#{index}\">#{graph.gsub(/\n/, " ")}</a>" +
+                          "</li>"
+        end
+      end
+
+      html_results << "</ul></ul>"
     end
+
+    html_results
   end
 
   def in_paragraphs(arr_text)
@@ -22,35 +39,29 @@ helpers do
   end
 
   def matching_chapters(query)
-    # load all chapter text
-      # initialize empty array chapters to hold all chapters
-      # each @chapter_names
-        # load file into one string, add it to results array
-
     chapter_numbers = (1..@chapter_names.length).to_a
 
-    chapter_texts = chapter_numbers.map do |num|
-      File.read("data/chp#{num}.txt")
+    chapter_arrays = chapter_numbers.map do |num|
+      File.readlines("#{@chapter_folder_path}#{num}.txt", "\n\n")
     end
 
-    # initialize empty array to hold chapter indexes for those chapters whose text matches query
-    # search for matches to query
-      # each chapters
-        # search the string for a match (regex? includes?)
-          # if match found, add current index to array of chapters that match
     matching_chapter_nums = []
 
-    chapter_texts.each_with_index do |chapter, index|
-      matching_chapter_nums << (index + 1) if chapter.include?(query)
+    chapter_arrays.each_with_index do |chapter, index|
+      matching_chapter_nums << (index + 1) if chapter.any? { |graph| graph.include?(query) }
     end
 
-    matching_chapter_nums
+    results = matching_chapter_nums.each_with_object({}) do |num, hash|
+                                      hash[num] = chapter_arrays[num - 1]
+                                    end
+
+    [query, results]
   end
 
   def search_results(query)
-    matching_chapters = matching_chapters(query)
+    query, matching_chapters = matching_chapters(query)
 
-    html_chapter_results(matching_chapters)
+    html_query_results(query, matching_chapters)
   end
 end
 
@@ -64,7 +75,7 @@ get "/chapters/:chapter_num" do
   @chapter_num = params[:chapter_num].to_i
   @title = "#{@chapter_num}: #{@chapter_names[@chapter_num - 1]}"
 
-  chapter_path = "data/chp#{@chapter_num}.txt"
+  chapter_path = "#{@chapter_folder_path}#{@chapter_num}.txt"
 
   redirect "/" unless File.exist?(chapter_path)
 

@@ -7,9 +7,6 @@
 
 <% if params[:query] %>
   <h3 class="content-subhead">Search results for '<%= params[:query] %>'</h3>
-    <ul class="search-results">
-      <% @search_results.each do |result| %>
-        <%= result %>
-      <% end %>
-    </ul>
+  <%= @search_results.join %>
+
 <% end %>
