@@ -6,7 +6,28 @@
 </form>
 
 <% if params[:query] %>
-  <h3 class="content-subhead">Search results for '<%= params[:query] %>'</h3>
-  <%= @search_results.join %>
+  <% if @search_results.empty? %>
+    <p>Sorry, no matches were found.</p>
+  <% else %>
+    <h3 class="content-subhead">Search results for '<%= params[:query] %>'</h3>
 
+    <% @search_results.each do |chapter| %>
+      <ul>
+        <li>
+          <%= chapter[:name] %>
+        </li>
+        <ul>
+          <% chapter[:paragraphs].each do |graph| %>
+            <% graph.each do |index, text| %>
+              <li>
+                <a href="/chapters/<%= chapter[:num] %>#paragraph<%= index %>">
+                  <%= text %>
+                </a>
+              </li>
+            <% end %>
+          <% end %>
+        </ul>
+      </ul>
+    <% end %>
+  <% end %>
 <% end %>

@@ -8,25 +8,39 @@ before do
 end
 
 helpers do
-  def html_query_results(query, hash)
-    return ["<p>Sorry, no matches were found.</p>"] if hash.empty?
-
+  def html_query_results(query, chapters_hash)
     html_results = []
 
-    hash.each do |chapter_num, paragraphs|
-      html_results << "<ul class=\"search-result-chapter-heading\">"
-      html_results << "<li class=\"search-result-chapter-name\">#{@chapter_names[chapter_num - 1]}</li>"
-      html_results << "<ul class=\"search-result-paragraph-links-list\">"
+    return html_results if chapters_hash.empty?
+
+    # need array of hashes: :name, :num, :paragraphs (array of hashes: index-num => text)
+
+    chapters_hash.each do |chapter_num, paragraphs|
+      matching_paragraphs = []
 
       paragraphs.each_with_index do |graph, index|
         if graph.include?(query)
-          html_results << "<li class=\"search-result-paragraph-link\">" +
-                          "<a href=\"/chapters/#{chapter_num}#paragraph#{index}\">#{graph.gsub(/\n/, " ")}</a>" +
-                          "</li>"
+          matching_paragraphs.push( { "#{index}" => graph.gsub(/\n\n/, "").gsub(/\n/, " ") } )
         end
       end
 
-      html_results << "</ul></ul>"
+      html_results << { name: @chapter_names[chapter_num - 1],
+                        num: chapter_num,
+                        paragraphs: matching_paragraphs.to_a }
+
+      # html_results << "<ul class=\"search-result-chapter-heading\">"
+      # html_results << "<li class=\"search-result-chapter-name\">#{@chapter_names[chapter_num - 1]}</li>"
+      # html_results << "<ul class=\"search-result-paragraph-links-list\">"
+
+      # paragraphs.each_with_index do |graph, index|
+      #   if graph.include?(query)
+      #     html_results << "<li class=\"search-result-paragraph-link\">" +
+      #                     "<a href=\"/chapters/#{chapter_num}#paragraph#{index}\">#{graph.gsub(/\n/, " ")}</a>" +
+      #                     "</li>"
+      #   end
+      # end
+
+      # html_results << "</ul></ul>"
     end
 
     html_results
@@ -54,7 +68,6 @@ helpers do
     results = matching_chapter_nums.each_with_object({}) do |num, hash|
                                       hash[num] = chapter_arrays[num - 1]
                                     end
-
     [query, results]
   end
 
