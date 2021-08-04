@@ -8,6 +8,10 @@ before do
 end
 
 helpers do
+  def bold_query_match(query, text)
+    text.gsub(query, "<strong>#{query}</strong>")
+  end
+
   def html_query_results(query, chapters_hash)
     html_results = []
 
@@ -26,7 +30,7 @@ helpers do
 
       html_results << { name: @chapter_names[chapter_num - 1],
                         num: chapter_num,
-                        paragraphs: matching_paragraphs.to_a }
+                        paragraphs: matching_paragraphs }
 
       # html_results << "<ul class=\"search-result-chapter-heading\">"
       # html_results << "<li class=\"search-result-chapter-name\">#{@chapter_names[chapter_num - 1]}</li>"

@@ -21,7 +21,7 @@
             <% graph.each do |index, text| %>
               <li>
                 <a href="/chapters/<%= chapter[:num] %>#paragraph<%= index %>">
-                  <%= text %>
+                  <%= bold_query_match(params[:query], text) %>
                 </a>
               </li>
             <% end %>
