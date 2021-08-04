@@ -17,8 +17,6 @@ helpers do
 
     return html_results if chapters_hash.empty?
 
-    # need array of hashes: :name, :num, :paragraphs (array of hashes: index-num => text)
-
     chapters_hash.each do |chapter_num, paragraphs|
       matching_paragraphs = []
 
@@ -31,20 +29,6 @@ helpers do
       html_results << { name: @chapter_names[chapter_num - 1],
                         num: chapter_num,
                         paragraphs: matching_paragraphs }
-
-      # html_results << "<ul class=\"search-result-chapter-heading\">"
-      # html_results << "<li class=\"search-result-chapter-name\">#{@chapter_names[chapter_num - 1]}</li>"
-      # html_results << "<ul class=\"search-result-paragraph-links-list\">"
-
-      # paragraphs.each_with_index do |graph, index|
-      #   if graph.include?(query)
-      #     html_results << "<li class=\"search-result-paragraph-link\">" +
-      #                     "<a href=\"/chapters/#{chapter_num}#paragraph#{index}\">#{graph.gsub(/\n/, " ")}</a>" +
-      #                     "</li>"
-      #   end
-      # end
-
-      # html_results << "</ul></ul>"
     end
 
     html_results
